@@ -1,0 +1,314 @@
+2026-04-19 23:26:20,974 [INFO] Database initialised at /home/tony/dev/plant_monitor_hybrid/db/plants.db
+2026-04-19 23:26:29,669 [INFO] Disease model not found at /home/tony/dev/plant_monitor_hybrid/models/plant_disease.tflite — disease detection disabled
+2026-04-19 23:27:13,863 [INFO] Using analyzer: local (mode=local)
+2026-04-19 23:51:53,302 [INFO] Using analyzer: local (mode=local)
+2026-04-19 23:51:53,427 [INFO] Initialization successful.
+2026-04-19 23:51:53,427 [INFO] Camera now open.
+2026-04-19 23:51:53,429 [INFO] Camera configuration has been adjusted!
+2026-04-19 23:51:53,430 [INFO] Configuration successful!
+2026-04-19 23:51:53,444 [INFO] Camera started
+2026-04-19 23:51:55,518 [INFO] Camera stopped
+2026-04-19 23:51:55,920 [INFO] Camera closed successfully.
+2026-04-19 23:51:55,920 [INFO] Captured image to /home/tony/dev/plant_monitor_hybrid/captures/plant_1/20260419_235153_original.jpg
+2026-04-19 23:51:56,451 [INFO] Disease model not found at /home/tony/dev/plant_monitor_hybrid/models/plant_disease.tflite — disease detection disabled
+2026-04-19 23:51:56,498 [INFO] Annotated image saved to /home/tony/dev/plant_monitor_hybrid/captures/plant_1/20260419_235153_annotated.jpg
+2026-04-19 23:51:56,503 [INFO] Reading stored for plant Kitchen Monstera: critical (0/100) via local
+2026-04-19 23:53:38,353 [INFO] Database initialised at /home/tony/dev/plant_monitor_hybrid/db/plants.db
+2026-04-19 23:53:38,370 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.77:5000
+2026-04-19 23:53:38,370 [INFO] [33mPress CTRL+C to quit[0m
+2026-04-19 23:54:01,222 [ERROR] Exception on / [GET]
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/tony/dev/plant_monitor_hybrid/src/web_app.py", line 52, in index
+    return render_template("index.html", plants=plants)
+  File "/usr/lib/python3/dist-packages/flask/templating.py", line 149, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/usr/lib/python3/dist-packages/jinja2/loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/flask/templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/flask/templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: index.html
+2026-04-19 23:54:01,231 [INFO] 127.0.0.1 - - [19/Apr/2026 23:54:01] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2026-04-19 23:54:01,310 [INFO] 127.0.0.1 - - [19/Apr/2026 23:54:01] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-04-19 23:54:39,056 [INFO] 127.0.0.1 - - [19/Apr/2026 23:54:39] "[33mGET /index.html HTTP/1.1[0m" 404 -
+2026-04-20 00:22:40,012 [INFO] Database initialised at /home/tony/dev/plant_monitor_hybrid/db/plants.db
+2026-04-20 00:22:40,022 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.77:5000
+2026-04-20 00:22:40,023 [INFO] [33mPress CTRL+C to quit[0m
+2026-04-20 00:22:48,988 [INFO] 127.0.0.1 - - [20/Apr/2026 00:22:48] "GET / HTTP/1.1" 200 -
+2026-04-20 00:22:49,028 [INFO] 127.0.0.1 - - [20/Apr/2026 00:22:49] "GET /captures/plant_1/20260419_235153_annotated.jpg HTTP/1.1" 200 -
+2026-04-20 00:22:54,118 [ERROR] Exception on /plant/1 [GET]
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/tony/dev/plant_monitor_hybrid/src/web_app.py", line 107, in plant_detail
+    return render_template(
+        "plant_detail.html",
+    ...<3 lines>...
+        chart_data=json.dumps(chart_data),
+    )
+  File "/usr/lib/python3/dist-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/usr/lib/python3/dist-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/tony/dev/plant_monitor_hybrid/templates/plant_detail.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/home/tony/dev/plant_monitor_hybrid/templates/base.html", line 83, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tony/dev/plant_monitor_hybrid/templates/plant_detail.html", line 37, in block 'content'
+    <h3>Latest reading {% if r.analyzer %}<span class="analyzer-tag {{ r.analyzer }}">{{ r.analyzer }}</span>{% endif %}</h3>
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'r' is undefined
+2026-04-20 00:22:54,124 [INFO] 127.0.0.1 - - [20/Apr/2026 00:22:54] "[35m[1mGET /plant/1 HTTP/1.1[0m" 500 -
+2026-04-20 00:22:59,172 [INFO] 127.0.0.1 - - [20/Apr/2026 00:22:59] "GET / HTTP/1.1" 200 -
+2026-04-20 00:22:59,211 [INFO] 127.0.0.1 - - [20/Apr/2026 00:22:59] "[36mGET /captures/plant_1/20260419_235153_annotated.jpg HTTP/1.1[0m" 304 -
+2026-04-20 00:23:00,818 [INFO] 127.0.0.1 - - [20/Apr/2026 00:23:00] "GET / HTTP/1.1" 200 -
+2026-04-20 00:23:00,856 [INFO] 127.0.0.1 - - [20/Apr/2026 00:23:00] "[36mGET /captures/plant_1/20260419_235153_annotated.jpg HTTP/1.1[0m" 304 -
+2026-04-20 00:24:28,090 [ERROR] Exception on /plant/1 [GET]
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/tony/dev/plant_monitor_hybrid/src/web_app.py", line 107, in plant_detail
+    return render_template(
+        "plant_detail.html",
+    ...<3 lines>...
+        chart_data=json.dumps(chart_data),
+    )
+  File "/usr/lib/python3/dist-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/usr/lib/python3/dist-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/tony/dev/plant_monitor_hybrid/templates/plant_detail.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/home/tony/dev/plant_monitor_hybrid/templates/base.html", line 83, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tony/dev/plant_monitor_hybrid/templates/plant_detail.html", line 37, in block 'content'
+    <h3>Latest reading {% if r.analyzer %}<span class="analyzer-tag {{ r.analyzer }}">{{ r.analyzer }}</span>{% endif %}</h3>
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'r' is undefined
+2026-04-20 00:24:28,094 [INFO] 127.0.0.1 - - [20/Apr/2026 00:24:28] "[35m[1mGET /plant/1 HTTP/1.1[0m" 500 -
+2026-04-20 00:26:41,323 [ERROR] Exception on /plant/1 [GET]
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/tony/dev/plant_monitor_hybrid/src/web_app.py", line 107, in plant_detail
+    return render_template(
+        "plant_detail.html",
+    ...<3 lines>...
+        chart_data=json.dumps(chart_data),
+    )
+  File "/usr/lib/python3/dist-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/usr/lib/python3/dist-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/tony/dev/plant_monitor_hybrid/templates/plant_detail.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/home/tony/dev/plant_monitor_hybrid/templates/base.html", line 83, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tony/dev/plant_monitor_hybrid/templates/plant_detail.html", line 37, in block 'content'
+    {% set r = readings[0] %}
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'r' is undefined
+2026-04-20 00:26:41,325 [INFO] 127.0.0.1 - - [20/Apr/2026 00:26:41] "[35m[1mGET /plant/1 HTTP/1.1[0m" 500 -
+2026-04-20 00:26:44,267 [INFO] 127.0.0.1 - - [20/Apr/2026 00:26:44] "GET / HTTP/1.1" 200 -
+2026-04-20 00:26:44,306 [INFO] 127.0.0.1 - - [20/Apr/2026 00:26:44] "[36mGET /captures/plant_1/20260419_235153_annotated.jpg HTTP/1.1[0m" 304 -
+2026-04-20 00:26:44,997 [ERROR] Exception on /plant/1 [GET]
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/lib/python3/dist-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/tony/dev/plant_monitor_hybrid/src/web_app.py", line 107, in plant_detail
+    return render_template(
+        "plant_detail.html",
+    ...<3 lines>...
+        chart_data=json.dumps(chart_data),
+    )
+  File "/usr/lib/python3/dist-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/usr/lib/python3/dist-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/tony/dev/plant_monitor_hybrid/templates/plant_detail.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/home/tony/dev/plant_monitor_hybrid/templates/base.html", line 83, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tony/dev/plant_monitor_hybrid/templates/plant_detail.html", line 37, in block 'content'
+    {% set r = readings[0] %}
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'r' is undefined
+2026-04-20 00:26:45,004 [INFO] 127.0.0.1 - - [20/Apr/2026 00:26:45] "[35m[1mGET /plant/1 HTTP/1.1[0m" 500 -
+2026-04-20 00:27:09,023 [INFO] Database initialised at /home/tony/dev/plant_monitor_hybrid/db/plants.db
+2026-04-20 00:27:09,034 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.77:5000
+2026-04-20 00:27:09,034 [INFO] [33mPress CTRL+C to quit[0m
+2026-04-20 00:27:14,633 [INFO] 127.0.0.1 - - [20/Apr/2026 00:27:14] "GET / HTTP/1.1" 200 -
+2026-04-20 00:27:14,674 [INFO] 127.0.0.1 - - [20/Apr/2026 00:27:14] "[36mGET /captures/plant_1/20260419_235153_annotated.jpg HTTP/1.1[0m" 304 -
+2026-04-20 00:27:16,749 [INFO] 127.0.0.1 - - [20/Apr/2026 00:27:16] "GET /plant/1 HTTP/1.1" 200 -
+2026-04-20 00:27:16,786 [INFO] 127.0.0.1 - - [20/Apr/2026 00:27:16] "[36mGET /captures/plant_1/20260419_235153_annotated.jpg HTTP/1.1[0m" 304 -
+2026-04-20 14:14:51,776 [INFO] 127.0.0.1 - - [20/Apr/2026 14:14:51] "GET /plant/new HTTP/1.1" 200 -
+2026-04-20 14:15:33,564 [INFO] 127.0.0.1 - - [20/Apr/2026 14:15:33] "[32mPOST /plant/new HTTP/1.1[0m" 302 -
+2026-04-20 14:15:33,575 [INFO] 127.0.0.1 - - [20/Apr/2026 14:15:33] "GET /plant/2 HTTP/1.1" 200 -
+2026-04-20 14:15:37,998 [INFO] Using analyzer: local (mode=local)
+2026-04-20 14:15:38,133 [INFO] Initialization successful.
+2026-04-20 14:15:38,133 [INFO] Camera now open.
+2026-04-20 14:15:38,137 [INFO] Camera configuration has been adjusted!
+2026-04-20 14:15:38,137 [INFO] Configuration successful!
+2026-04-20 14:15:38,159 [INFO] Camera started
+2026-04-20 14:15:40,215 [INFO] Camera stopped
+2026-04-20 14:15:40,617 [INFO] Camera closed successfully.
+2026-04-20 14:15:40,618 [INFO] Captured image to /home/tony/dev/plant_monitor_hybrid/captures/plant_2/20260420_141537_original.jpg
+2026-04-20 14:15:40,931 [INFO] Disease model not found at /home/tony/dev/plant_monitor_hybrid/models/plant_disease.tflite — disease detection disabled
+2026-04-20 14:15:40,931 [ERROR] Local analysis failed
+Traceback (most recent call last):
+  File "/home/tony/dev/plant_monitor_hybrid/src/analyzers/local.py", line 514, in analyse
+    result = _synthesise(color, droop, disease, bbox, plant_context)
+  File "/home/tony/dev/plant_monitor_hybrid/src/analyzers/local.py", line 400, in _synthesise
+    elif color["avg_saturation"] < 0.25 and color["avg_value"] > 0.5:
+         ~~~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'avg_saturation'
+2026-04-20 14:15:40,985 [INFO] Annotated image saved to /home/tony/dev/plant_monitor_hybrid/captures/plant_2/20260420_141537_annotated.jpg
+2026-04-20 14:15:40,989 [INFO] Reading stored for plant living room monstera: unknown (0/100) via local
+2026-04-20 14:15:40,990 [INFO] 127.0.0.1 - - [20/Apr/2026 14:15:40] "[32mPOST /plant/2/capture HTTP/1.1[0m" 302 -
+2026-04-20 14:15:41,000 [INFO] 127.0.0.1 - - [20/Apr/2026 14:15:41] "GET /plant/2 HTTP/1.1" 200 -
+2026-04-20 14:15:41,042 [INFO] 127.0.0.1 - - [20/Apr/2026 14:15:41] "GET /captures/plant_2/20260420_141537_annotated.jpg HTTP/1.1" 200 -
+2026-04-20 14:16:05,620 [INFO] Using analyzer: local (mode=local)
+2026-04-20 14:16:05,661 [INFO] Initialization successful.
+2026-04-20 14:16:05,662 [INFO] Camera now open.
+2026-04-20 14:16:05,666 [INFO] Camera configuration has been adjusted!
+2026-04-20 14:16:05,667 [INFO] Configuration successful!
+2026-04-20 14:16:05,696 [INFO] Camera started
+2026-04-20 14:16:07,735 [INFO] Camera stopped
+2026-04-20 14:16:08,137 [INFO] Camera closed successfully.
+2026-04-20 14:16:08,137 [INFO] Captured image to /home/tony/dev/plant_monitor_hybrid/captures/plant_2/20260420_141605_original.jpg
+2026-04-20 14:16:08,703 [INFO] Disease model not found at /home/tony/dev/plant_monitor_hybrid/models/plant_disease.tflite — disease detection disabled
+2026-04-20 14:16:08,745 [INFO] Annotated image saved to /home/tony/dev/plant_monitor_hybrid/captures/plant_2/20260420_141605_annotated.jpg
+2026-04-20 14:16:08,750 [INFO] Reading stored for plant living room monstera: fair (55/100) via local
+2026-04-20 14:16:08,752 [INFO] 127.0.0.1 - - [20/Apr/2026 14:16:08] "[32mPOST /plant/2/capture HTTP/1.1[0m" 302 -
+2026-04-20 14:16:08,758 [INFO] 127.0.0.1 - - [20/Apr/2026 14:16:08] "GET /plant/2 HTTP/1.1" 200 -
+2026-04-20 14:16:08,807 [INFO] 127.0.0.1 - - [20/Apr/2026 14:16:08] "GET /captures/plant_2/20260420_141605_annotated.jpg HTTP/1.1" 200 -
+2026-04-20 14:16:20,854 [INFO] Using analyzer: local (mode=local)
+2026-04-20 14:16:20,885 [INFO] Initialization successful.
+2026-04-20 14:16:20,885 [INFO] Camera now open.
+2026-04-20 14:16:20,888 [INFO] Camera configuration has been adjusted!
+2026-04-20 14:16:20,889 [INFO] Configuration successful!
+2026-04-20 14:16:20,960 [INFO] Camera started
+2026-04-20 14:16:22,989 [INFO] Camera stopped
+2026-04-20 14:16:23,391 [INFO] Camera closed successfully.
+2026-04-20 14:16:23,391 [INFO] Captured image to /home/tony/dev/plant_monitor_hybrid/captures/plant_2/20260420_141620_original.jpg
+2026-04-20 14:16:23,991 [INFO] Disease model not found at /home/tony/dev/plant_monitor_hybrid/models/plant_disease.tflite — disease detection disabled
+2026-04-20 14:16:24,033 [INFO] Annotated image saved to /home/tony/dev/plant_monitor_hybrid/captures/plant_2/20260420_141620_annotated.jpg
+2026-04-20 14:16:24,037 [INFO] Reading stored for plant living room monstera: poor (42/100) via local
+2026-04-20 14:16:24,038 [INFO] 127.0.0.1 - - [20/Apr/2026 14:16:24] "[32mPOST /plant/2/capture HTTP/1.1[0m" 302 -
+2026-04-20 14:16:24,047 [INFO] 127.0.0.1 - - [20/Apr/2026 14:16:24] "GET /plant/2 HTTP/1.1" 200 -
+2026-04-20 14:16:24,092 [INFO] 127.0.0.1 - - [20/Apr/2026 14:16:24] "GET /captures/plant_2/20260420_141620_annotated.jpg HTTP/1.1" 200 -
+2026-04-20 14:20:36,554 [INFO] Using analyzer: local (mode=local)
+2026-04-20 14:20:36,600 [INFO] Initialization successful.
+2026-04-20 14:20:36,601 [INFO] Camera now open.
+2026-04-20 14:20:36,603 [INFO] Camera configuration has been adjusted!
+2026-04-20 14:20:36,603 [INFO] Configuration successful!
+2026-04-20 14:20:36,625 [INFO] Camera started
+2026-04-20 14:20:38,682 [INFO] Camera stopped
+2026-04-20 14:20:39,084 [INFO] Camera closed successfully.
+2026-04-20 14:20:39,088 [INFO] Captured image to /home/tony/dev/plant_monitor_hybrid/captures/plant_2/20260420_142036_original.jpg
+2026-04-20 14:20:39,662 [INFO] Disease model not found at /home/tony/dev/plant_monitor_hybrid/models/plant_disease.tflite — disease detection disabled
+2026-04-20 14:20:39,705 [INFO] Annotated image saved to /home/tony/dev/plant_monitor_hybrid/captures/plant_2/20260420_142036_annotated.jpg
+2026-04-20 14:20:39,714 [INFO] Reading stored for plant living room monstera: good (79/100) via local
+2026-04-20 14:20:39,715 [INFO] 127.0.0.1 - - [20/Apr/2026 14:20:39] "[32mPOST /plant/2/capture HTTP/1.1[0m" 302 -
+2026-04-20 14:20:39,720 [INFO] 127.0.0.1 - - [20/Apr/2026 14:20:39] "GET /plant/2 HTTP/1.1" 200 -
+2026-04-20 14:20:39,759 [INFO] 127.0.0.1 - - [20/Apr/2026 14:20:39] "GET /captures/plant_2/20260420_142036_annotated.jpg HTTP/1.1" 200 -
+2026-04-20 14:21:17,411 [INFO] 127.0.0.1 - - [20/Apr/2026 14:21:17] "GET / HTTP/1.1" 200 -
+2026-04-20 14:21:17,465 [INFO] 127.0.0.1 - - [20/Apr/2026 14:21:17] "[36mGET /captures/plant_1/20260419_235153_annotated.jpg HTTP/1.1[0m" 304 -
+2026-04-20 14:21:17,466 [INFO] 127.0.0.1 - - [20/Apr/2026 14:21:17] "[36mGET /captures/plant_2/20260420_142036_annotated.jpg HTTP/1.1[0m" 304 -
+2026-04-20 14:21:21,374 [INFO] 127.0.0.1 - - [20/Apr/2026 14:21:21] "GET /plant/1 HTTP/1.1" 200 -
+2026-04-20 14:21:21,410 [INFO] 127.0.0.1 - - [20/Apr/2026 14:21:21] "[36mGET /captures/plant_1/20260419_235153_annotated.jpg HTTP/1.1[0m" 304 -
+2026-04-20 14:21:35,621 [INFO] 127.0.0.1 - - [20/Apr/2026 14:21:35] "GET / HTTP/1.1" 200 -
+2026-04-20 14:21:35,671 [INFO] 127.0.0.1 - - [20/Apr/2026 14:21:35] "[36mGET /captures/plant_1/20260419_235153_annotated.jpg HTTP/1.1[0m" 304 -
+2026-04-20 14:21:35,674 [INFO] 127.0.0.1 - - [20/Apr/2026 14:21:35] "[36mGET /captures/plant_2/20260420_142036_annotated.jpg HTTP/1.1[0m" 304 -
+2026-04-22 20:09:04,405 [INFO] 127.0.0.1 - - [22/Apr/2026 20:09:04] "GET /plant/2 HTTP/1.1" 200 -
+2026-04-22 20:09:04,454 [INFO] 127.0.0.1 - - [22/Apr/2026 20:09:04] "[36mGET /captures/plant_2/20260420_142036_annotated.jpg HTTP/1.1[0m" 304 -
+2026-04-22 20:09:30,547 [INFO] 127.0.0.1 - - [22/Apr/2026 20:09:30] "[36mGET /captures/plant_2/20260420_141620_annotated.jpg HTTP/1.1[0m" 304 -

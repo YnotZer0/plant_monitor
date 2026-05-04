@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}{{ plant.name }}{% endblock %}
+{% block content %}
+
+<div class="card">
+  <div class="row">
+    <div class="col">
+      <h2 style="margin-bottom: 0.25rem">{{ plant.name }}</h2>
+      <div class="meta">{{ plant.species or 'Unknown species' }} &middot; {{ plant.location or 'Unspecified' }}</div>
+      {% if plant.notes %}<p style="margin-top: 0.75rem;">{{ plant.notes }}</p>{% endif %}
+    </div>
+    <div>
+      <form method="post" action="{{ url_for('trigger_capture', plant_id=plant.id) }}"
+            style="display: flex; gap: 0.5rem; align-items: center;">
+        <select name="analyzer_mode" style="width: auto;">
+          <option value="">Default ({{ analyzer_mode }})</option>
+          <option value="cloud" {% if not cloud_available %}disabled{% endif %}>
+            Cloud{% if not cloud_available %} (offline){% endif %}
+          </option>
+          <option value="local">Local (offline)</option>
+          <option value="auto">Auto</option>
+        </select>
+        <button class="btn" type="submit">📷 Capture & Analyse</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% if readings %}
+<div class="card">
+  <h3>Health over time</h3>
+  <canvas id="healthChart" height="80"></canvas>
+</div>
+
+<div class="row">
+  <div class="col card">
+    {% set r = readings[0] %}
+    <h3>Latest reading {% if r.analyzer %}<span class="analyzer-tag {{ r.analyzer }}">{{ r.analyzer }}</span>{% endif %}</h3>
+    <img class="reading-img" src="{{ url_for('serve_capture', filename=r.annotated_image_path|replace('captures/', '')) }}" alt="annotated">
+    <div class="status-row">
+      <div class="status-item">
+        <strong>Overall</strong>
+        <span class="badge {{ r.overall_health }}">{{ r.overall_health }}</span> {{ r.health_score }}/100
+      </div>
+      <div class="status-item">
+        <strong>Watering</strong>
+        {{ r.watering_status }} ({{ r.watering_confidence }}%)
+      </div>
+      <div class="status-item">
+        <strong>Sunlight</strong>
+        {{ r.sunlight_status }} ({{ r.sunlight_confidence }}%)
+      </div>
+    </div>
+    <p style="margin-top: 1rem;">{{ r.observations }}</p>
+    {% if r.issues %}
+      <h4>Issues detected</h4>
+      <ul>{% for i in r.issues %}<li><strong>{{ i.issue }}</strong> ({{ i.severity }}) — {{ i.location }}</li>{% endfor %}</ul>
+    {% endif %}
+    {% if r.recs %}
+      <h4>Recommendations</h4>
+      <ul>{% for rec in r.recs %}<li>{{ rec }}</li>{% endfor %}</ul>
+    {% endif %}
+  </div>
+
+  <div class="col card">
+    <h3>Care log</h3>
+    <form method="post" action="{{ url_for('add_care', plant_id=plant.id) }}" style="margin-bottom: 1rem;">
+      <div class="row">
+        <div class="col" style="min-width: 150px;">
+          <select name="event_type" required>
+            <option value="watered">💧 Watered</option>
+            <option value="fertilized">🌿 Fertilized</option>
+            <option value="repotted">🪴 Repotted</option>
+            <option value="moved">🔄 Moved</option>
+            <option value="pruned">✂️ Pruned</option>
+            <option value="treated">💊 Treated pest/disease</option>
+          </select>
+        </div>
+        <div class="col">
+          <input name="notes" placeholder="Notes (optional)">
+        </div>
+      </div>
+      <button class="btn" type="submit" style="margin-top: 0.5rem;">Log event</button>
+    </form>
+    {% if care %}
+      <table>
+        <tr><th>Date</th><th>Event</th><th>Notes</th></tr>
+        {% for c in care %}
+        <tr>
+          <td>{{ c.timestamp[:16]|replace('T', ' ') }}</td>
+          <td>{{ c.event_type }}</td>
+          <td>{{ c.notes }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="meta">No care events logged yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <h3>Full history ({{ readings|length }} readings)</h3>
+  <table>
+    <tr><th>Date</th><th>Health</th><th>Score</th><th>Water</th><th>Light</th><th>Analyzer</th><th>Image</th></tr>
+    {% for r in readings %}
+    <tr>
+      <td>{{ r.timestamp[:16]|replace('T', ' ') }}</td>
+      <td><span class="badge {{ r.overall_health }}">{{ r.overall_health }}</span></td>
+      <td>{{ r.health_score }}/100</td>
+      <td>{{ r.watering_status }}</td>
+      <td>{{ r.sunlight_status }}</td>
+      <td>{% if r.analyzer %}<span class="analyzer-tag {{ r.analyzer }}">{{ r.analyzer }}</span>{% else %}-{% endif %}</td>
+      <td><a href="{{ url_for('serve_capture', filename=r.annotated_image_path|replace('captures/', '')) }}" target="_blank">view</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const data = {{ chart_data|safe }};
+  new Chart(document.getElementById('healthChart'), {
+    type: 'line',
+    data: {
+      labels: data.map(d => d.t.substring(5, 16).replace('T', ' ')),
+      datasets: [{
+        label: 'Health score',
+        data: data.map(d => d.score),
+        borderColor: '#2e8b57',
+        backgroundColor: 'rgba(46,139,87,0.15)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4,
+      }]
+    },
+    options: {
+      scales: { y: { min: 0, max: 100 } },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            afterLabel: (ctx) => {
+              const d = data[ctx.dataIndex];
+              return `Water: ${d.water}\nLight: ${d.light}`;
+            }
+          }
+        }
+      }
+    }
+  });
+</script>
+
+{% else %}
+<div class="card">
+  <p>No readings yet. Click <strong>Capture & Analyse</strong> to take the first photo.</p>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,89 +1,221 @@
-**Plant Health Monitoring System for Raspberry Pi 5**
+# 🌱 Plant Health Monitor (Hybrid)
 
-__Architecture Overview__
+An AI-powered plant-care system for Raspberry Pi 5 that photographs your plants, analyses their health, and tracks progress over time. Runs in three modes:
 
-The system will combine:
-- Picamera2 (native Pi 5 camera library) for image capture
-- Claude's Vision API for plant health analysis (excellent for nuanced visual assessment)
-- SQLite for lightweight local storage of plant records
-- Flask web interface so you can view it from any device on your network
-- PIL/Pillow for image annotation
+- **☁️ Cloud mode** — Claude vision API. Highest quality analysis, best at unfamiliar species. Requires internet + API key.
+- **📴 Local mode** — Fully offline on the Pi. Classical computer vision plus an optional TFLite disease classifier. Best as a *trend* tool for catching changes over time, not as a diagnostic tool (more below).
+- **🔀 Auto mode** (default) — Tries cloud; seamlessly falls back to local when offline or if the API fails.
 
+The rest of the system — SQLite database, Flask web UI, annotated captures, history charts, care log — is identical across modes. Everything plugs into a common analyzer interface, so readings from any mode are stored and displayed the same way.
 
-__How it all fits together__
+## Honest comparison: what each mode can actually do
 
-Core flow: plant_monitor.py handles the pipeline — picamera2 captures a high-res JPEG, it's base64-encoded and sent to Claude's vision API with a structured-JSON prompt, the response is parsed, a bounding box and health summary are drawn onto a copy of the image with Pillow, and everything (original path, annotated path, health scores, observations, recommendations, raw JSON) is stored in SQLite.
-Three ways to use it: the Flask web UI (web_app.py) for browsing from your phone, the CLI (cli.py) for scripting and quick checks, and the scheduler (scheduler.py) for hands-off daily monitoring. The two systemd unit files let you run the web UI and scheduler as proper background services that start on boot.
+| Signal | Cloud (Claude) | Local (CV heuristics) | Local (+ TFLite model) |
+|---|---|---|---|
+| Overall health trend over time | ✅ excellent | ✅ reliable | ✅ reliable |
+| Dominant yellowing → overwatering | ✅ | ✅ | ✅ |
+| Dominant browning → underwatering | ✅ | ✅ | ✅ |
+| Subtle early warning signs | ✅ | ❌ | ⚠️ model-dependent |
+| Named diseases (blight, rust, mildew) | ✅ | ❌ | ✅ (14 crop species only) |
+| Species identification | ✅ | ❌ | ✅ (PlantVillage crops only) |
+| Sun scorch detection | ✅ | ⚠️ prone to false positives on bright backgrounds | ✅ |
+| Insufficient light diagnosis | ✅ | ⚠️ unreliable from single photo | ⚠️ same |
+| Pest detection (spider mites, etc.) | ✅ | ❌ | ⚠️ model-dependent |
+| Care recommendations | ✅ nuanced | ✅ rule-based | ✅ rule-based |
+| Works offline | ❌ | ✅ | ✅ |
 
-Storage layout: each plant gets its own folder under captures/plant_<id>/, containing paired <timestamp>_original.jpg and <timestamp>_annotated.jpg files. The SQLite database at db/plants.db has three tables: plants, readings, and care_events — the care log is key because it lets you see things like "health dropped after I moved it to the bathroom" or "the watering I added on Tuesday helped."
+**If you need real diagnostic quality offline**, train the TFLite model (see below) OR add hardware sensors (soil moisture, lux). Classical CV on its own is best thought of as a "something changed" detector, not a "here's the diagnosis" detector.
 
-__A few things to note on the Pi__
+## Hardware
 
-Create your venv with --system-site-packages — picamera2 is installed system-wide on Raspberry Pi OS and isn't available via pip, so a normal venv won't see it.
-The code has a dev fallback — if picamera2 can't be imported, it writes a placeholder green image so you can test the pipeline on non-Pi machines.
-Set ANTHROPIC_API_KEY before running, either as an env var or directly in the systemd unit files.
-Consistent framing matters a lot — if you can mount the camera in a fixed position pointing at each plant (or use a small rotating rig), your time-series comparisons become much more meaningful.
+- Raspberry Pi 5 running Raspberry Pi OS (Bookworm)
+- Official Raspberry Pi Camera Module (v2, v3, or HQ)
+- Optional but very helpful: tripod/wall mount for consistent framing
 
+## Installation
 
-**ENHANCED: Plant Health Monitor — Hybrid (Cloud + Local Offline)**
+```bash
+# 1. Copy this directory to your Pi, e.g. ~/plant_monitor
+cd ~/plant_monitor
 
-Cloud mode — Claude vision API (highest quality)
-Local mode — fully offline on the Pi 5
-Auto mode — try cloud, fall back to local if no internet
+# 2. Create a venv with system site packages (for picamera2)
+python3 -m venv --system-site-packages venv
+source venv/bin/activate
 
-__How the local offline analyzer works__
+# 3. Install core dependencies
+pip install -r requirements.txt
 
-The Pi 5 has enough compute to run real ML locally, but we need to be realistic — a fine-tuned plant-disease CNN + classical computer vision heuristics gives the best balance of accuracy and speed. 
+# 4. (Optional) Install tflite-runtime for disease detection
+pip install tflite-runtime
 
-My approach:
-Layer 1 — Classical CV (always fast, always runs):
+# 5. (Optional) Set your API key for cloud mode
+export ANTHROPIC_API_KEY="sk-ant-..."
 
-- Color analysis in HSV space — measures green vs. yellow/brown ratios across the plant to detect chlorosis (overwatering/nutrient issues) or browning (underwatering/scorch)
-- Leaf segmentation — isolates plant pixels from background using green-channel thresholding
-- Droop/wilt detection — analyzes leaf orientation via edge detection and contour angles
-- Brightness/exposure analysis — scene brightness helps infer light conditions when compared over time
-- Leaf scorch detection — bright white/bleached patches indicate excessive sunlight
+# 6. Choose default mode (defaults to "auto" — tries cloud, falls back to local)
+export PLANT_ANALYZER="auto"   # or "cloud" or "local"
 
-Layer 2 — Deep learning (optional, one-time download):
+# 7. Initialise the database
+python src/cli.py init
 
-PlantVillage-trained MobileNetV2 — detects 38 classes of plant diseases (leaf spots, blights, mildews, rusts). Runs via TensorFlow Lite on the Pi 5's CPU in ~200ms per image.
+# 8. Check what's available
+python src/cli.py status
+```
 
-Layer 3 — Rule-based synthesis — combines signals into the same JSON schema the cloud analyzer produces, so the rest of the app doesn't care which one ran.
+Expected `status` output:
 
+```
+Analyzer status:
+  cloud (Claude API):   ✅ available
+  local (offline CV):   ✅ available
+  local disease model:  ⚠️  not installed (optional)
+```
 
+## Usage
 
-__What I should have done from the start__
-Shipped with confidence scores that honestly reflect uncertainty, not tried to make synthetic tests pass. 
+### CLI
 
-The local analyzer's real value is:
+```bash
+# Add a plant
+python src/cli.py add-plant "Kitchen Monstera" --species "Monstera deliciosa"
 
-- Reliable detection of widespread color changes (a clearly yellow-dominated plant → yes, that's overwatering/deficiency)
-- Consistent measurements over time (score dropping from 85 to 60 over two weeks is meaningful even if the absolute thresholds are off)
+# Capture using the default mode
+python src/cli.py capture 1
 
-A framework to build on with real data
+# Force a specific mode
+python src/cli.py capture 1 --mode local
+python src/cli.py capture 1 --mode cloud
 
-- The local analyzer cannot reliably do single-photo disease diagnosis without a trained model, and my tuning attempts confirmed that. The right answer was what I built anyway — an optional TFLite hook — plus being honest that classical CV alone is a health trend tool, not a diagnostic tool.
+# See history — the Analyzer column shows which backend produced each reading
+python src/cli.py history 1
 
-__Recommendation__
-Rather than burning more turns on synthetic-image tuning, get more value by:
+# Log a care event
+python src/cli.py care 1 watered --notes "Gave about 200ml"
+```
 
-- Taking v1 and using it for a week with real plants via cloud mode
-- Dropping those real photos into a calibration script that prints every CV signal
-- Tuning thresholds against ground truth observed
+### Web UI
 
+```bash
+python src/web_app.py
+```
 
+Browse to `http://<pi-ip>:5000`. The header shows the current mode and a cloud/offline indicator. On each plant's page, a dropdown next to the Capture button lets you override the analyzer per-capture. Every reading is tagged with the analyzer that produced it.
 
+### Scheduler
 
-**Suggested Additional FUTURE Features**
-- Multi-plant tracking with QR codes or position-based IDs — tag each plant location so the system knows which plant it's photographing
-- Scheduled captures (cron-based) for consistent daily monitoring
-- Environmental sensor integration — a cheap DHT22 or BME280 gives temperature/humidity context
-- Soil moisture sensor integration — capacitive sensors via ADC for ground-truth watering data
-- Alert notifications via email/Telegram/Pushover when a plant shows distress
-- Leaf/pest detection — spots, yellowing, pest damage, fungal signs
-- Growth tracking — measure plant size/leaf count over time via bounding boxes
-- Time-lapse generation from daily captures
-- Comparative analysis — "this plant is doing worse than last week"
-- Care recommendations log — track what you did (watered, moved, fertilized) and correlate with health outcomes
-- Light level measurement using a BH1750 lux sensor
-- Species-specific knowledge — store the species per plant so analysis is tailored
+```bash
+python src/scheduler.py
+```
+
+Runs a daily capture of all plants at 09:00 (edit `CAPTURE_TIME` in `scheduler.py`). In auto mode, uses cloud when online, falls back to local when offline.
+
+### Systemd services
+
+```bash
+sudo cp plant-monitor-web.service /etc/systemd/system/
+sudo cp plant-monitor-scheduler.service /etc/systemd/system/
+# Edit the files to set your paths and ANTHROPIC_API_KEY if using cloud
+sudo systemctl daemon-reload
+sudo systemctl enable --now plant-monitor-web plant-monitor-scheduler
+```
+
+## How the local analyzer works — and its limits
+
+Three layers combined:
+
+**Layer 1 — Classical computer vision (always runs):**
+- HSV colour segmentation isolates plant pixels from background
+- Morphological closing builds a "plant silhouette" that includes leaf interiors even where discoloured
+- Measures ratios within the silhouette: healthy green, yellow (chlorosis), brown (necrosis), bleached (scorch)
+- Droop score from the vertical position of the plant's centroid
+- Scene brightness/saturation used as weak light proxy
+
+**Layer 2 — Optional TFLite disease classifier:**
+- MobileNetV2 trained on PlantVillage (38 classes, 14 crop species)
+- Runs in ~200ms on the Pi 5 CPU via `tflite-runtime`
+- Only triggers if `models/plant_disease.tflite` exists — see below
+
+**Layer 3 — Rule-based synthesis:**
+- Combines signals into the same JSON schema Claude produces
+- Thresholds in `src/analyzers/local.py` `_synthesise()` are the main knobs
+- Confidence scores are deliberately lower than cloud mode when signals are ambiguous
+
+### Known limitations — read this before trusting local mode
+
+**The thresholds ship conservative.** They're tuned not to false-positive — a healthy plant with a bright background (window, wall) won't get flagged as scorched, for example. But this means small real problems may slip through. Classical CV cannot reliably distinguish "3% of the plant is mildly yellow because of the angle of the light" from "3% of the plant is genuinely yellowing from overwatering." The cloud analyzer can read that nuance. The local one cannot.
+
+**Use local mode primarily for trends.** A plant scoring 85 consistently, then dropping to 60 over a week, is a real signal regardless of the absolute thresholds. Compare readings across days, not across plants.
+
+**Single-photo light diagnosis is fundamentally hard.** Adding a £3 BH1750 lux sensor is a much better answer than tuning heuristics. "Insufficient light" and "excessive light" from a single photo are guesses; confidence scores reflect this.
+
+**The calibration script is your friend.** See below.
+
+### Calibrating for your setup
+
+```bash
+python calibrate.py photo.jpg
+```
+
+This prints every CV signal the analyzer extracts plus the final verdict. Take photos of plants you know are healthy and plants you know have problems, run them through calibrate.py, and adjust thresholds in `src/analyzers/local.py` (`_synthesise()`) until the outputs match your judgment.
+
+Add `--save-masks out/` to dump PNG visualisations of the plant mask and silhouette — useful for spotting segmentation issues.
+
+## Adding a TFLite disease model (optional)
+
+There's no single canonical pre-trained PlantVillage TFLite model available for direct download that I can recommend. Your options:
+
+1. **Train it yourself** on Google Colab using [obeshor/Plant-Diseases-Detector](https://github.com/obeshor/Plant-Diseases-Detector) — takes about an hour on a free Colab GPU, outputs a `.tflite` file. Drop it at `models/plant_disease.tflite`.
+2. **Find a pre-trained one** on [Kaggle](https://www.kaggle.com/search?q=plantvillage+tflite). Verify the class labels match the `PLANTVILLAGE_CLASSES` list in `src/analyzers/local.py`.
+3. **Skip it.** The CV-only analyzer still works.
+
+See `src/download_model.py` for more detail.
+
+## Architecture
+
+```
+plant_monitor/
+├── src/
+│   ├── plant_monitor.py       # Core: camera, orchestration, DB, annotation
+│   ├── web_app.py             # Flask UI
+│   ├── scheduler.py           # Daily auto-capture
+│   ├── cli.py                 # Command-line tool
+│   ├── download_model.py      # TFLite model setup guide
+│   └── analyzers/
+│       ├── base.py            # Analyzer interface + shared schema
+│       ├── cloud.py           # Claude vision API + connectivity check
+│       ├── local.py           # Offline CV + optional TFLite
+│       └── hybrid.py          # Cloud-first with fallback; factory
+├── templates/                 # Jinja templates
+├── captures/plant_<id>/       # Photos per plant (original + annotated)
+├── models/plant_disease.tflite  # Optional; place here if you have one
+├── db/plants.db               # SQLite (includes analyzer column)
+├── calibrate.py               # Threshold-tuning tool for local analyzer
+├── smoke_test.py              # Schema validation tests
+└── requirements.txt
+```
+
+Each reading stores which analyzer produced it, so you can filter history, spot drift when switching modes, or compare cloud vs local readings on the same plant by capturing both.
+
+## Extending
+
+- **Soil moisture sensor** (capacitive, via ADS1115 ADC) — huge upgrade for watering accuracy, especially in local mode
+- **BH1750 lux sensor** — solves the light-assessment problem properly
+- **BME280** — temperature/humidity context stored alongside readings
+- **Telegram/Pushover alerts** on poor/critical health
+- **Time-lapse videos** from daily captures
+- **Dual-mode comparison** — schedule both cloud and local captures daily, log the agreement rate, tune local thresholds from real-world disagreements
+
+To add a new analyzer backend, subclass `analyzers.base.Analyzer`, implement `analyse()` and `is_available()`, and register it in `analyzers/hybrid.py::get_analyzer()`. Nothing else needs to change.
+
+## Troubleshooting
+
+**`cli.py status` says cloud unavailable despite having a key** — the cloud analyzer also checks connectivity to `api.anthropic.com:443`. If your Pi can't reach the internet, it'll report unavailable regardless of the key.
+
+**Local analyzer reports "excellent" on a clearly unhealthy plant** — this is the known conservative-threshold issue. Run `calibrate.py` on the photo, note the ratios, and lower the relevant threshold in `_synthesise()`. Expect to do this with real photos, not trust the defaults.
+
+**`picamera2` import error** — create the venv with `--system-site-packages`. Without it you'll get the placeholder green image instead of real captures.
+
+**TFLite model won't load** — check `python src/cli.py status`. Either `tflite-runtime` isn't installed, the `.tflite` file is missing/corrupt, or the model's input/output dtypes aren't what the code expects (float32 or uint8 quantized are both handled).
+
+## License
+
+MIT.

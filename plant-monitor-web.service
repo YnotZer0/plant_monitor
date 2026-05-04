@@ -1,0 +1,15 @@
+[Unit]
+Description=Plant Monitor Web UI
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/plant_monitor/src
+Environment="ANTHROPIC_API_KEY=your-key-here"
+ExecStart=/home/pi/plant_monitor/venv/bin/python /home/pi/plant_monitor/src/web_app.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

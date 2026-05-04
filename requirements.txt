@@ -1,0 +1,21 @@
+# Core — always required
+Flask>=3.0.0
+Pillow>=10.0.0
+numpy>=1.24.0
+schedule>=1.2.0
+
+# Cloud analyzer — needed only if you want to use Claude's vision API.
+# Safe to keep installed even in offline-only mode; it just won't be used.
+anthropic>=0.40.0
+
+# Optional — enables named disease detection in the local analyzer.
+# Install this on the Pi (NOT on dev machines unless you want TF):
+#     pip install tflite-runtime
+# On Raspberry Pi OS Bookworm you may need:
+#     pip install tflite-runtime --extra-index-url https://google-coral.github.io/py-repo/
+# If tflite-runtime isn't available for your platform, full TensorFlow works too
+# but is ~500MB — prefer tflite-runtime on the Pi.
+# tflite-runtime
+
+# picamera2 is installed system-wide on Raspberry Pi OS — do NOT install via pip.
+# Create your venv with --system-site-packages so it's visible.

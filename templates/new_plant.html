@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width: 600px;">
+  <h2>Add a plant</h2>
+  <form method="post">
+    <label for="name">Name *</label>
+    <input name="name" id="name" required placeholder="e.g. Kitchen Monstera">
+
+    <label for="species">Species</label>
+    <input name="species" id="species" placeholder="e.g. Monstera deliciosa">
+
+    <label for="location">Location</label>
+    <input name="location" id="location" placeholder="e.g. Kitchen window">
+
+    <label for="notes">Notes</label>
+    <textarea name="notes" id="notes" rows="3" placeholder="Anything helpful — e.g. sensitive to cold, last repotted March"></textarea>
+
+    <div style="margin-top: 1rem;">
+      <button class="btn" type="submit">Add plant</button>
+      <a class="btn btn-secondary" href="{{ url_for('index') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
